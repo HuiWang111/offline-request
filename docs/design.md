@@ -84,16 +84,29 @@ new OfflineRequest({
     '/orders/search': 'order',
     '/order/:id': 'order'
 })
+
+// 如果后端很规范的话，可以不实用映射实现
+const url = '/orders/search';
+url.includes('order')
+url.match(/^\/order/)
 ```
 - 请求方法与数据库操作如何对应？
 ```js
 /**
  * 默认
- * get <=> query
- * post <=> query
- * put <=> create
+ * get <=> id query
+ * post <=> condition query
+ * put <=> add
  * patch <=> update
  * delete <=> delete
  */
 offlineRequest.post('/some/api', data, headers, 'create'); // 也可以指定
 ```
+- 判断是否有网络
+目前使用 `Network` 这个类，原理上使用了 `window.navigator.onLine` 做判断。
+**问题**
+    - 只能简单的判断是否连接网络，但是如：连接了路由器但是路由器不能上网这样的情况是无法判断的
+**解决方案**
+    - 使用ajax get请求，看拿到的返回状态是否是 `2xx`，并且设定一个定时任务，间歇性的去执行
+    - 但是显然会带来多余请求的问题，因此考虑是否需要这么做？？？？
+ 
