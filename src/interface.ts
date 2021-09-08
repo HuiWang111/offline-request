@@ -6,3 +6,14 @@ export interface DatabaseConfig {
      */
     version?: number;
 }
+
+export interface Options {
+    strict?: boolean;
+}
+
+export interface PollingConfig {
+    enabled?: boolean;
+    url?: string;
+    timeout?: number;
+    interval?: number;
+}

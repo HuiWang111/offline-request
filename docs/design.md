@@ -5,6 +5,9 @@
 - [service-workers](https://developers.google.com/web/fundamentals/primers/service-workers)
 - [storage-for-the-web](https://web.dev/storage-for-the-web/)
 - [indexeddb-react-apps-offline-data-storage](https://blog.logrocket.com/dexie-js-indexeddb-react-apps-offline-data-storage/)
+- [Using Service Workers with create-react-app](https://blog.bitsrc.io/using-service-workers-with-react-27a4c5e2d1a9)
+- [workbox-webpack-plugin](https://developers.google.com/web/tools/workbox/modules/workbox-webpack-plugin)
+- [Using the IndexedDB API with React (and Hooks)](https://levelup.gitconnected.com/using-the-indexeddb-api-with-react-and-hooks-4e63d83a5d1b)
 
 ### 工具
 - [storage-quota](https://storage-quota.glitch.me/)
@@ -100,13 +103,13 @@ url.match(/^\/order/)
  * patch <=> update
  * delete <=> delete
  */
-offlineRequest.post('/some/api', data, headers, 'create'); // 也可以指定
+offlineRequest.post('/some/api', data, headers, 'add'); // 也可以指定
 ```
 - 判断是否有网络
 目前使用 `Network` 这个类，原理上使用了 `window.navigator.onLine` 做判断。
-**问题**
-    - 只能简单的判断是否连接网络，但是如：连接了路由器但是路由器不能上网这样的情况是无法判断的
-**解决方案**
+- **问题**
+    - 只能简单的判断是否有网络连接，但无法判断是否能正常上网
+- **解决方案**
     - 使用ajax get请求，看拿到的返回状态是否是 `2xx`，并且设定一个定时任务，间歇性的去执行
     - 但是显然会带来多余请求的问题，因此考虑是否需要这么做？？？？
  
