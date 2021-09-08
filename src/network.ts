@@ -1,5 +1,5 @@
 /**
- * reference https://github.com/cwise89/react-detect-offline/blob/master/src/index.js
+ * @reference https://github.com/cwise89/react-detect-offline/blob/master/src/index.js
  */
 import { PollingConfig } from './interface';
 
@@ -70,15 +70,36 @@ export class NetWork {
         }, interval);
     }
 
-    private stopPolling(): void {
+    private ping(url: string, timeout: number): Promise<boolean> {
+        return new Promise((resolve) => {
+            const isOnline = () => resolve(true);
+            const isOffline = () => resolve(false);
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.onerror = isOffline;
+            xhr.ontimeout = isOffline;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === xhr.HEADERS_RECEIVED) {
+                    if (xhr.status) {
+                        isOnline();
+                    } else {
+                        isOffline();
+                    }
+                }
+            };
+
+            xhr.open('GET', url);
+            xhr.timeout = timeout;
+            xhr.send();
+        })
+    }
+
+    public stopPolling(): void {
         if (this._pollingId) {
             clearInterval(this._pollingId);
             this._pollingId = null;
         }
-    }
-
-    private ping(url: string, timeout: number): Promise<boolean> {
-        // 
     }
 
     public get isOnline(): boolean {
