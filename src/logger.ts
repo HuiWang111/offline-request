@@ -1,6 +1,6 @@
 export class Logger {
     public static async remainingStorage(): Promise<void> {
-        if (navigator.storage && navigator.storage.estimate) {
+        if (navigator && navigator.storage && navigator.storage.estimate) {
             const storageEstimate = await navigator.storage.estimate();
             const usage = storageEstimate.usage || 0;
             const quota = storageEstimate.quota || 0;
