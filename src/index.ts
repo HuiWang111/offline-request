@@ -1,1 +1,3 @@
-export { NetWork } from './network';
+import { OfflineRequest } from './offlineRequest';
+
+export default OfflineRequest;

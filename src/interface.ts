@@ -29,3 +29,9 @@ export enum RequestMethod {
     PUT,
     PATCH
 }
+
+export interface RouterCallbackResponse {
+    data: any;
+    status: number;
+    statusText: string;
+}
