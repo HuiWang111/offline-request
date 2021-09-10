@@ -1,39 +1,29 @@
-import { Dexie } from 'dexie';
-import { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { NetWork } from './network';
 import { Logger } from './logger';
-import { DatabaseConfig } from './interface';
+import { OfflineRequestClient } from './client';
 
 export class OfflineRequest {
     private _network: NetWork;
     private _httpClient: AxiosInstance;
-    private _db: Dexie;
-    private _url2tableMapping: Record<string, string>;
+    private _offlineClient: OfflineRequestClient;
 
     constructor(
         httpClient: AxiosInstance,
-        {
-            dbName,
-            schema,
-            url2tableMapping,
-            options,
-            version
-        }: DatabaseConfig
+        offlineClient: OfflineRequestClient
     ) {
         this._network = new NetWork();
         this._httpClient = httpClient;
-        this._db = new Dexie(dbName, options);
-        this._url2tableMapping = url2tableMapping;
-
-        this._db.version(version || 1).stores(schema);
+        this._offlineClient = offlineClient;
 
         Logger.remainingStorage();
     }
 
-    public async get(url: string, config?: AxiosRequestConfig): Promise<void> {
+    public get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
         if (this._network.isOnline) {
-            this._httpClient.get(url, config);
-            return;
+            return this._httpClient.get(url, config);
         }
+
+        return this._offlineClient.get(url, config);
     }
 }
