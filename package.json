@@ -1,6 +1,6 @@
 {
     "name": "offline-request",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "compatibility offline and online request tools",
     "main": "dist/index.js",
     "license": "MIT",
@@ -20,5 +20,9 @@
         "demo": "ts-node scripts/runDemo.ts",
         "demo-install": "ts-node scripts/install.ts",
         "build": "node scripts/build.mjs"
-    }
+    },
+    "files": [
+        "dist",
+        "package.json"
+    ]
 }
