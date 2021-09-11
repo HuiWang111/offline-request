@@ -16,7 +16,9 @@ yarn add offline-request
 import OfflineRequest from '../../../../src'
 import Axios from 'axios'
 
-export const offlineRequest = new OfflineRequest(Axios.create());
+export const offlineRequest = new OfflineRequest(Axios.create(), {
+    cacheOnly: true // 强制使用离线请求，不实用http请求（也不会进行网络状况检测）
+});
 ```
 
 - client端页面逻辑
@@ -87,17 +89,29 @@ export const Dashboard: FC = observer(() => {
 
 - server端离线服务逻辑
 ```ts
+// server/index.ts
 import Dexie from 'dexie';
 import { offlineRequest } from 'utils';
+import { todoController } from './todos';
 
 export const runServer = () => {
     const db = new Dexie("test_database");
-    
+
+    todoController(db, offlineRequest.server);
+}
+```
+
+```ts
+// server/todos.ts
+import Dexie from 'dexie';
+import { OfflineRequestServer } from '../../../../src';
+
+export const todoController = (db: Dexie, router: OfflineRequestServer) => {
     db.version(1).stores({
         todos: 'text'
     });
     
-    offlineRequest.server.get('/todos/query', async () => {
+    router.get('/todos/query', async () => {
         const todos = await db.table('todos').toArray();
         console.log(todos);
         return {
@@ -107,7 +121,7 @@ export const runServer = () => {
         };
     });
 
-    offlineRequest.server.put('/todos', async (todo: { text: string }) => {
+    router.put('/todos', async (todo: { text: string }) => {
         await db.table('todos').add(todo);
 
         return {

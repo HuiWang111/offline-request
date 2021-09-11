@@ -35,3 +35,8 @@ export interface RouterCallbackResponse {
     status: number;
     statusText: string;
 }
+
+export interface OfflineRequestOptions {
+    networkOnly?: boolean;
+    cacheOnly?: boolean;
+}

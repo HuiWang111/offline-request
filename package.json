@@ -17,6 +17,7 @@
     },
     "dependencies": {},
     "scripts": {
-        "demo": "ts-node scripts/runDemo.ts"
+        "demo": "ts-node scripts/runDemo.ts",
+        "demo-install": "ts-node scripts/install.ts"
     }
 }

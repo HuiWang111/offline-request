@@ -29,7 +29,8 @@ export class Router {
     }
 
     public async emit(method: RequestMethodType, url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        const callback = this._events.get(`${RequestMethod[method]}:${url}`);
+        const eventType = `${RequestMethod[method]}:${url}`;
+        const callback = this._events.get(eventType);
 
         if (callback) {
             const response: RouterCallbackResponse = await callback(data, config);
@@ -41,6 +42,8 @@ export class Router {
                 request: {}
             };
         }
+
+        console.warn(`${eventType} has no callback`);
         return undefined;
     }
 }

@@ -1,14 +1,12 @@
 import Dexie from 'dexie';
-import { offlineRequest } from 'utils';
+import { OfflineRequestServer } from '../../../../src';
 
-export const runServer = () => {
-    const db = new Dexie("test_database");
-    
+export const todoController = (db: Dexie, router: OfflineRequestServer) => {
     db.version(1).stores({
         todos: 'text'
     });
     
-    offlineRequest.server.get('/todos/query', async () => {
+    router.get('/todos/query', async () => {
         const todos = await db.table('todos').toArray();
         console.log(todos);
         return {
@@ -18,7 +16,7 @@ export const runServer = () => {
         };
     });
 
-    offlineRequest.server.put('/todos', async (todo: { text: string }) => {
+    router.put('/todos', async (todo: { text: string }) => {
         await db.table('todos').add(todo);
 
         return {
