@@ -12,6 +12,7 @@ yarn add offline-request
 new OfflineRequest(httpClient, options);
 ```
 - httpClient
+
 | type | default | required |
 | ---- | ---- | ---- |
 | AxiosInstance | none | true |
