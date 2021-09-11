@@ -25,10 +25,10 @@ export class OfflineRequest {
         this.server = new Router();
 
         /**
-         * 只使用离线缓存情况下，关闭轮询检测网络状态
+         * 仅使用离线缓存或者仅使用网络请求的情况下，关闭轮询检测网络状态
          */
         this._network = new NetWork({
-            enabled: !cacheOnly
+            enabled: !cacheOnly && !networkOnly
         });
         this._httpClient = httpClient;
         this._client = new OfflineRequestClient(this.server);

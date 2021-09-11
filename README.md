@@ -7,10 +7,34 @@ npm i offline-request
 yarn add offline-request
 ```
 
+### 参数说明
+```ts
+new OfflineRequest(httpClient, options);
+```
+- httpClient
+| type | default | required |
+| ---- | ---- | ---- |
+| AxiosInstance | none | true |
+
+- options
+```ts
+/**
+ * 默认都是false，当两个都为false时，会进行网络状态判断
+ * 网络正常走网络请求
+ * 网络不正常走本地请求
+ * @networkOnly 仅使用网络请求
+ * @cacheOnly 仅使用本地请求
+ */
+export interface OfflineRequestOptions {
+    networkOnly?: boolean;
+    cacheOnly?: boolean;
+}
+```
+
 ### usage
 这里主要演示离线时的代码，非离线时就是正常使用axios发送请求
 
-- new 一个 `OfflineRequest` 实例
+- 创建一个 `OfflineRequest` 实例
 ```ts
 // utils
 import OfflineRequest from '../../../../src'
