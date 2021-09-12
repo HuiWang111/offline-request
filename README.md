@@ -9,13 +9,13 @@ yarn add offline-request
 
 ### 参数说明
 ```ts
-new OfflineRequest(httpClient, options);
+new OfflineRequest(httpClient, options, pollingConfig);
 ```
 - httpClient
 
 | type | default | required |
 | ---- | ---- | ---- |
-| AxiosInstance | none | true |
+| AxiosInstance | none | false |
 
 - options
 ```ts
@@ -29,6 +29,17 @@ new OfflineRequest(httpClient, options);
 export interface OfflineRequestOptions {
     networkOnly?: boolean;
     cacheOnly?: boolean;
+}
+```
+
+- pollingConfig
+轮询检查网络状态的配置
+```ts
+export interface PollingConfig {
+    enabled?: boolean; // 是否开启轮询检查网络，如果不开启，只会监听 'online' 和 'offline'事件来更新网络状态比较
+    url?: string; // 轮询请求地址
+    timeout?: number; // xhr.timeout 参考https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/timeout
+    interval?: number; // 轮询间隔时间
 }
 ```
 

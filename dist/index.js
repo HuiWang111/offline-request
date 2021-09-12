@@ -154,6 +154,11 @@ var RequestMethod;
 var Router = class {
   constructor() {
     this._events = new Map();
+    this.get = this.get.bind(this);
+    this.delete = this.delete.bind(this);
+    this.post = this.post.bind(this);
+    this.put = this.put.bind(this);
+    this.patch = this.patch.bind(this);
   }
   get(url, callback) {
     this._events.set(`${RequestMethod.GET}:${url}`, callback);
@@ -194,13 +199,16 @@ var OfflineRequest = class {
   } = {
     networkOnly: false,
     cacheOnly: false
-  }) {
-    this.server = new Router();
-    this._network = new NetWork({
-      enabled: !cacheOnly && !networkOnly
-    });
+  }, pollingConfig) {
+    if ((networkOnly || !cacheOnly) && !httpClient) {
+      throw new Error("[OfflineRequest] httpClient is required, unless options.cacheOnly is true");
+    }
+    this._server = new Router();
+    this._network = new NetWork(__spreadValues({
+      enabled: typeof (pollingConfig == null ? void 0 : pollingConfig.enabled) === "undefined" ? !cacheOnly && !networkOnly : pollingConfig.enabled
+    }, pollingConfig));
     this._httpClient = httpClient;
-    this._client = new OfflineRequestClient(this.server);
+    this._client = new OfflineRequestClient(this._server);
     this._options = {
       networkOnly,
       cacheOnly
@@ -240,6 +248,15 @@ var OfflineRequest = class {
       return this._httpClient.patch(url, data, config);
     }
     return this._client.patch(url, data, config);
+  }
+  get server() {
+    return {
+      get: this._server.get,
+      delete: this._server.delete,
+      post: this._server.post,
+      put: this._server.put,
+      patch: this._server.patch
+    };
   }
 };
 

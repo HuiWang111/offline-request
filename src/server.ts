@@ -6,6 +6,12 @@ export class Router {
 
     constructor() {
         this._events = new Map();
+
+        this.get = this.get.bind(this);
+        this.delete = this.delete.bind(this);
+        this.post = this.post.bind(this);
+        this.put = this.put.bind(this);
+        this.patch = this.patch.bind(this);
     }
 
     public get(url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>): void {

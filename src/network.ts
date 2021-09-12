@@ -14,7 +14,7 @@ const defaultPollingConfig: PollingConfig = {
 export class NetWork {
     private _isOnline: boolean;
     private _pollingConfig: PollingConfig;
-    private _pollingId: number | null = null;
+    private _pollingId: NodeJS.Timer | null = null;
 
     constructor({
         enabled = defaultPollingConfig.enabled,
