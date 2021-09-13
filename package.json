@@ -1,6 +1,6 @@
 {
     "name": "offline-request",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "compatibility offline and online request tools",
     "main": "dist/index.js",
     "types": "dist/indx.d.ts",
@@ -20,7 +20,7 @@
     "scripts": {
         "demo": "ts-node scripts/runDemo.ts",
         "demo-install": "ts-node scripts/install.ts",
-        "ts-types": " tsc src/index.ts --target es5 --declaration --emitDeclarationOnly --outDir dist",
+        "ts-types": "tsc src/index.ts --target es5 --declaration --emitDeclarationOnly --outDir dist",
         "build": "node scripts/build.mjs && npm run ts-types"
     },
     "files": [

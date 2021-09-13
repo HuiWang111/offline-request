@@ -25,10 +25,6 @@ export interface RouterCallbackResponse {
     status: number;
     statusText: string;
 }
-export interface OfflineRequestOptions {
-    networkOnly?: boolean;
-    cacheOnly?: boolean;
-}
 export interface OfflineRequestServer {
     get: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
     delete: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;

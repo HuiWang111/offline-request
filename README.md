@@ -7,54 +7,20 @@ npm i offline-request
 yarn add offline-request
 ```
 
-### 参数说明
-```ts
-new OfflineRequest(httpClient, options, pollingConfig);
-```
-- httpClient
-
-| type | default | required |
-| ---- | ---- | ---- |
-| AxiosInstance | none | false |
-
-- options
-```ts
-/**
- * 默认都是false，当两个都为false时，会进行网络状态判断
- * 网络正常走网络请求
- * 网络不正常走本地请求
- * @networkOnly 仅使用网络请求
- * @cacheOnly 仅使用本地请求
- */
-export interface OfflineRequestOptions {
-    networkOnly?: boolean;
-    cacheOnly?: boolean;
-}
-```
-
-- pollingConfig
-轮询检查网络状态的配置
-```ts
-export interface PollingConfig {
-    enabled?: boolean; // 是否开启轮询检查网络，如果不开启，只会监听 'online' 和 'offline'事件来更新网络状态比较
-    url?: string; // 轮询请求地址
-    timeout?: number; // xhr.timeout 参考https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/timeout
-    interval?: number; // 轮询间隔时间
-}
-```
-
 ### usage
 这里主要演示离线时的代码，非离线时就是正常使用axios发送请求
 
 - 创建一个 `OfflineRequest` 实例
 ```ts
 // utils
-import OfflineRequest from '../../../../src'
+import OfflineRequest, { NetWork } from '../../../../src'
 import Axios from 'axios'
 
-export const offlineRequest = new OfflineRequest(Axios.create(), {
-    cacheOnly: true // 强制使用离线请求，不实用http请求（也不会进行网络状况检测）
-});
+const network = new NetWork()
+export const offlineRequest = new OfflineRequest(
+    Axios.create(),
+    () => network.isOnline // 如果不根据网络状态判断则不需要使用NetWork类，只需要保证改该函返回boolean即可
+);
 ```
 
 - client端页面逻辑
@@ -192,4 +158,31 @@ const init = () => {
 init()
 
 runServer() // 将离线服务跑起来
+```
+
+### OfflineRequest模块
+```ts
+new OfflineRequest(httpClient: AxiosInstance, isOnline: () => boolean);
+```
+
+- isOnline
+用于判断使用http请求，还是使用前端消息通信请求
+
+### Network模块
+用于判断当前网络状态
+```ts
+const network = new Network(pollingConfig?: PollingConfig)
+
+// network.isOnline为true时网络状态正常
+// network.isOnline为false时表示当前无网络
+```
+- pollingConfig
+轮询检查网络状态的配置
+```ts
+export interface PollingConfig {
+    enabled?: boolean; // 是否开启轮询检查网络，如果不开启，只会监听 'online' 和 'offline'事件来更新网络状态比较
+    url?: string; // 轮询请求地址
+    timeout?: number; // xhr.timeout 参考https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/timeout
+    interval?: number; // 轮询间隔时间
+}
 ```

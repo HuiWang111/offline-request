@@ -1,5 +1,5 @@
-import OfflineRequest from '../../../../src'
+import OfflineRequest, { NetWork } from '../../../../src'
+import Axios from 'axios'
 
-export const offlineRequest = new OfflineRequest(null, {
-    cacheOnly: true
-});
+const network = new NetWork()
+export const offlineRequest = new OfflineRequest(Axios.create(), () => false);

@@ -26,8 +26,131 @@ var __export = (target, all) => {
 
 // src/index.ts
 __export(exports, {
-  default: () => src_default
+  NetWork: () => NetWork,
+  default: () => OfflineRequest
 });
+
+// src/client.ts
+var OfflineRequestClient = class {
+  constructor(router) {
+    this._router = router;
+  }
+  get(url, config) {
+    return this._router.emit("GET", url, null, config);
+  }
+  delete(url, config) {
+    return this._router.emit("DELETE", url, null, config);
+  }
+  post(url, data, config) {
+    return this._router.emit("POST", url, data, config);
+  }
+  put(url, data, config) {
+    return this._router.emit("PUT", url, data, config);
+  }
+  patch(url, data, config) {
+    return this._router.emit("PATCH", url, data, config);
+  }
+};
+
+// src/interface.ts
+var RequestMethod;
+(function(RequestMethod2) {
+  RequestMethod2[RequestMethod2["GET"] = 0] = "GET";
+  RequestMethod2[RequestMethod2["DELETE"] = 1] = "DELETE";
+  RequestMethod2[RequestMethod2["POST"] = 2] = "POST";
+  RequestMethod2[RequestMethod2["PUT"] = 3] = "PUT";
+  RequestMethod2[RequestMethod2["PATCH"] = 4] = "PATCH";
+})(RequestMethod || (RequestMethod = {}));
+
+// src/server.ts
+var Router = class {
+  constructor() {
+    this._events = new Map();
+    this.get = this.get.bind(this);
+    this.delete = this.delete.bind(this);
+    this.post = this.post.bind(this);
+    this.put = this.put.bind(this);
+    this.patch = this.patch.bind(this);
+  }
+  get(url, callback) {
+    this._events.set(`${RequestMethod.GET}:${url}`, callback);
+  }
+  delete(url, callback) {
+    this._events.set(`${RequestMethod.DELETE}:${url}`, callback);
+  }
+  post(url, callback) {
+    this._events.set(`${RequestMethod.POST}:${url}`, callback);
+  }
+  put(url, callback) {
+    this._events.set(`${RequestMethod.PUT}:${url}`, callback);
+  }
+  patch(url, callback) {
+    this._events.set(`${RequestMethod.PATCH}:${url}`, callback);
+  }
+  async emit(method, url, data, config) {
+    const eventType = `${RequestMethod[method]}:${url}`;
+    const callback = this._events.get(eventType);
+    if (callback) {
+      const response = await callback(data, config);
+      return __spreadProps(__spreadValues({}, response), {
+        headers: {},
+        config: {},
+        request: {}
+      });
+    }
+    console.warn(`${eventType} has no callback`);
+    return void 0;
+  }
+};
+
+// src/offlineRequest.ts
+var OfflineRequest = class {
+  constructor(httpClient, isOnline) {
+    this._server = new Router();
+    this._httpClient = httpClient;
+    this._cacheClient = new OfflineRequestClient(this._server);
+    this._isOnline = isOnline;
+  }
+  get(url, config) {
+    if (this._isOnline()) {
+      return this._httpClient.get(url, config);
+    }
+    return this._cacheClient.get(url, config);
+  }
+  delete(url, config) {
+    if (this._isOnline()) {
+      return this._httpClient.delete(url, config);
+    }
+    return this._cacheClient.delete(url, config);
+  }
+  post(url, data, config) {
+    if (this._isOnline()) {
+      return this._httpClient.post(url, data, config);
+    }
+    return this._cacheClient.post(url, data, config);
+  }
+  put(url, data, config) {
+    if (this._isOnline()) {
+      return this._httpClient.put(url, data, config);
+    }
+    return this._cacheClient.put(url, data, config);
+  }
+  patch(url, data, config) {
+    if (this._isOnline()) {
+      return this._httpClient.patch(url, data, config);
+    }
+    return this._cacheClient.patch(url, data, config);
+  }
+  get server() {
+    return {
+      get: this._server.get,
+      delete: this._server.delete,
+      post: this._server.post,
+      put: this._server.put,
+      patch: this._server.patch
+    };
+  }
+};
 
 // src/network.ts
 var isBrowser = typeof navigator !== "undefined";
@@ -117,150 +240,7 @@ var NetWork = class {
     window.removeEventListener("offline", this.setOffline);
   }
 };
-
-// src/client.ts
-var OfflineRequestClient = class {
-  constructor(router) {
-    this._router = router;
-  }
-  get(url, config) {
-    return this._router.emit("GET", url, null, config);
-  }
-  delete(url, config) {
-    return this._router.emit("DELETE", url, null, config);
-  }
-  post(url, data, config) {
-    return this._router.emit("POST", url, data, config);
-  }
-  put(url, data, config) {
-    return this._router.emit("PUT", url, data, config);
-  }
-  patch(url, data, config) {
-    return this._router.emit("PATCH", url, data, config);
-  }
-};
-
-// src/interface.ts
-var RequestMethod;
-(function(RequestMethod2) {
-  RequestMethod2[RequestMethod2["GET"] = 0] = "GET";
-  RequestMethod2[RequestMethod2["DELETE"] = 1] = "DELETE";
-  RequestMethod2[RequestMethod2["POST"] = 2] = "POST";
-  RequestMethod2[RequestMethod2["PUT"] = 3] = "PUT";
-  RequestMethod2[RequestMethod2["PATCH"] = 4] = "PATCH";
-})(RequestMethod || (RequestMethod = {}));
-
-// src/server.ts
-var Router = class {
-  constructor() {
-    this._events = new Map();
-    this.get = this.get.bind(this);
-    this.delete = this.delete.bind(this);
-    this.post = this.post.bind(this);
-    this.put = this.put.bind(this);
-    this.patch = this.patch.bind(this);
-  }
-  get(url, callback) {
-    this._events.set(`${RequestMethod.GET}:${url}`, callback);
-  }
-  delete(url, callback) {
-    this._events.set(`${RequestMethod.DELETE}:${url}`, callback);
-  }
-  post(url, callback) {
-    this._events.set(`${RequestMethod.POST}:${url}`, callback);
-  }
-  put(url, callback) {
-    this._events.set(`${RequestMethod.PUT}:${url}`, callback);
-  }
-  patch(url, callback) {
-    this._events.set(`${RequestMethod.PATCH}:${url}`, callback);
-  }
-  async emit(method, url, data, config) {
-    const eventType = `${RequestMethod[method]}:${url}`;
-    const callback = this._events.get(eventType);
-    if (callback) {
-      const response = await callback(data, config);
-      return __spreadProps(__spreadValues({}, response), {
-        headers: {},
-        config: {},
-        request: {}
-      });
-    }
-    console.warn(`${eventType} has no callback`);
-    return void 0;
-  }
-};
-
-// src/offlineRequest.ts
-var OfflineRequest = class {
-  constructor(httpClient, {
-    networkOnly = false,
-    cacheOnly = false
-  } = {
-    networkOnly: false,
-    cacheOnly: false
-  }, pollingConfig) {
-    if ((networkOnly || !cacheOnly) && !httpClient) {
-      throw new Error("[OfflineRequest] httpClient is required, unless options.cacheOnly is true");
-    }
-    this._server = new Router();
-    this._network = new NetWork(__spreadValues({
-      enabled: typeof (pollingConfig == null ? void 0 : pollingConfig.enabled) === "undefined" ? !cacheOnly && !networkOnly : pollingConfig.enabled
-    }, pollingConfig));
-    this._httpClient = httpClient;
-    this._client = new OfflineRequestClient(this._server);
-    this._options = {
-      networkOnly,
-      cacheOnly
-    };
-  }
-  get(url, config) {
-    const { networkOnly, cacheOnly } = this._options;
-    if (networkOnly || !cacheOnly && this._network.isOnline) {
-      return this._httpClient.get(url, config);
-    }
-    return this._client.get(url, config);
-  }
-  delete(url, config) {
-    const { networkOnly, cacheOnly } = this._options;
-    if (networkOnly || !cacheOnly && this._network.isOnline) {
-      return this._httpClient.delete(url, config);
-    }
-    return this._client.delete(url, config);
-  }
-  post(url, data, config) {
-    const { networkOnly, cacheOnly } = this._options;
-    if (networkOnly || !cacheOnly && this._network.isOnline) {
-      return this._httpClient.post(url, data, config);
-    }
-    return this._client.post(url, data, config);
-  }
-  put(url, data, config) {
-    const { networkOnly, cacheOnly } = this._options;
-    if (networkOnly || !cacheOnly && this._network.isOnline) {
-      return this._httpClient.put(url, data, config);
-    }
-    return this._client.put(url, data, config);
-  }
-  patch(url, data, config) {
-    const { networkOnly, cacheOnly } = this._options;
-    if (networkOnly || !cacheOnly && this._network.isOnline) {
-      return this._httpClient.patch(url, data, config);
-    }
-    return this._client.patch(url, data, config);
-  }
-  get server() {
-    return {
-      get: this._server.get,
-      delete: this._server.delete,
-      post: this._server.post,
-      put: this._server.put,
-      patch: this._server.patch
-    };
-  }
-};
-
-// src/index.ts
-var src_default = OfflineRequest;
 // Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {});
+0 && (module.exports = {
+  NetWork
+});
