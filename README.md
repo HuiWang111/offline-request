@@ -166,7 +166,8 @@ new OfflineRequest(httpClient: AxiosInstance, isOnline: () => boolean);
 ```
 
 - isOnline
-用于判断使用http请求，还是使用前端消息通信请求
+    - 用于判断使用http请求，还是使用前端消息通信请求
+    - 前端消息通信请求使用发布订阅模式模拟http网络请求，使得前端代码与操作indexDB的逻辑可以拆分开来，避免耦合
 
 ### Network模块
 用于判断当前网络状态
