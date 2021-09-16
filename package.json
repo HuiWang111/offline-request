@@ -4,7 +4,7 @@
     "description": "compatibility offline and online request tools",
     "main": "dist/index.js",
     "module": "dist/index.js",
-    "types": "dist/indx.d.ts",
+    "types": "dist/index.d.ts",
     "license": "MIT",
     "devDependencies": {
         "@types/node": "^16.9.1",
