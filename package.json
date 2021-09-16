@@ -1,6 +1,6 @@
 {
     "name": "offline-request",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "compatibility offline and online request tools",
     "main": "dist/index.js",
     "types": "dist/indx.d.ts",
