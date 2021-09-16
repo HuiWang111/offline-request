@@ -1,6 +1,3 @@
-/**
- * @reference https://github.com/cwise89/react-detect-offline/blob/master/src/index.js
- */
 import { PollingConfig } from './interface';
 export declare class NetWork {
     private _isOnline;
