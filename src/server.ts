@@ -1,4 +1,5 @@
-import { RequestMethod, RequestMethodType, RouterCallbackResponse } from './interface';
+/* eslint-disable no-console */
+import { RequestMethod, RequestMethodType, RouterCallbackResponse, OfflineRequestOptions } from './interface';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export class Router {
@@ -34,7 +35,28 @@ export class Router {
         this._events.set(`${RequestMethod.PATCH}:${url}`, callback);
     }
 
-    public async emit(method: RequestMethodType, url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
+    public async emit(method: RequestMethodType, url: string, options: OfflineRequestOptions, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
+        if (options.logRequestInfo) {
+            if (typeof console.group === 'function') {
+                console.group('offline request information')
+                console.info(JSON.stringify({
+                    method,
+                    url,
+                    data,
+                    config
+                }, null, 4));
+                console.groupEnd();
+            } else {
+                console.info('offline request information');
+                console.info(JSON.stringify({
+                    method,
+                    url,
+                    data,
+                    config
+                }, null, 4));
+            }
+        }
+
         const eventType = `${RequestMethod[method]}:${url}`;
         const callback = this._events.get(eventType);
 

@@ -8,11 +8,11 @@ export interface PollingConfig {
 }
 
 export interface Request {
-    get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
-    delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
-    post(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
-    put(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
-    patch(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
+    get(url: string, options: OfflineRequestOptions, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
+    delete(url: string, options: OfflineRequestOptions, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
+    post(url: string, options: OfflineRequestOptions, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
+    put(url: string, options: OfflineRequestOptions, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
+    patch(url: string, options: OfflineRequestOptions, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
 }
 
 export type RequestMethodType = 
@@ -42,4 +42,8 @@ export interface OfflineRequestServer {
     post: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
     put: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
     patch: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
+}
+
+export interface OfflineRequestOptions {
+    logRequestInfo?: boolean;
 }

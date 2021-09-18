@@ -1,5 +1,5 @@
 import { AxiosResponse, AxiosRequestConfig } from 'axios';
-import { Request } from './interface';
+import { Request, OfflineRequestOptions } from './interface';
 import { Router } from './server';
 
 export class OfflineRequestClient implements Request {
@@ -9,23 +9,23 @@ export class OfflineRequestClient implements Request {
         this._router = router;
     }
 
-    public get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        return this._router.emit('GET', url, null, config);
+    public get(url: string, options: OfflineRequestOptions, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
+        return this._router.emit('GET', url, options, null, config);
     }
 
-    public delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        return this._router.emit('DELETE', url, null, config);
+    public delete(url: string, options: OfflineRequestOptions, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
+        return this._router.emit('DELETE', url, options, null, config);
     }
 
-    public post(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        return this._router.emit('POST', url, data, config);
+    public post(url: string, options: OfflineRequestOptions, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
+        return this._router.emit('POST', url, options, data, config);
     }
 
-    public put(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        return this._router.emit('PUT', url, data, config);
+    public put(url: string, options: OfflineRequestOptions, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
+        return this._router.emit('PUT', url, options, data, config);
     }
     
-    public patch(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        return this._router.emit('PATCH', url, data, config);
+    public patch(url: string, options: OfflineRequestOptions, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
+        return this._router.emit('PATCH', url, options, data, config);
     }
 }
