@@ -1,11 +1,12 @@
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { OfflineRequestServer } from './interface';
+import { OfflineRequestServer, OfflineRequestOptions } from './interface';
 export declare class OfflineRequest {
     private _httpClient;
     private _cacheClient;
     private _server;
+    private _options;
     private _isOnline;
-    constructor(httpClient: AxiosInstance, isOnline: () => boolean);
+    constructor(httpClient: AxiosInstance, isOnline: () => boolean, { logRequestInfo }?: OfflineRequestOptions);
     get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
     delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
     post(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;

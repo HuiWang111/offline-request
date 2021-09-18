@@ -2,19 +2,19 @@ export class OfflineRequestClient {
     constructor(router) {
         this._router = router;
     }
-    get(url, config) {
-        return this._router.emit('GET', url, null, config);
+    get(url, options, config) {
+        return this._router.emit('GET', url, options, null, config);
     }
-    delete(url, config) {
-        return this._router.emit('DELETE', url, null, config);
+    delete(url, options, config) {
+        return this._router.emit('DELETE', url, options, null, config);
     }
-    post(url, data, config) {
-        return this._router.emit('POST', url, data, config);
+    post(url, options, data, config) {
+        return this._router.emit('POST', url, options, data, config);
     }
-    put(url, data, config) {
-        return this._router.emit('PUT', url, data, config);
+    put(url, options, data, config) {
+        return this._router.emit('PUT', url, options, data, config);
     }
-    patch(url, data, config) {
-        return this._router.emit('PATCH', url, data, config);
+    patch(url, options, data, config) {
+        return this._router.emit('PATCH', url, options, data, config);
     }
 }

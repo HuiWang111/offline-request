@@ -32,8 +32,29 @@ export class Router {
     patch(url, callback) {
         this._events.set(`${RequestMethod.PATCH}:${url}`, callback);
     }
-    emit(method, url, data, config) {
+    emit(method, url, options, data, config) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (options.logRequestInfo) {
+                if (typeof console.group === 'function') {
+                    console.group('offline request information');
+                    console.info(JSON.stringify({
+                        method,
+                        url,
+                        data,
+                        config
+                    }, null, 4));
+                    console.groupEnd();
+                }
+                else {
+                    console.info('offline request information');
+                    console.info(JSON.stringify({
+                        method,
+                        url,
+                        data,
+                        config
+                    }, null, 4));
+                }
+            }
             const eventType = `${RequestMethod[method]}:${url}`;
             const callback = this._events.get(eventType);
             if (callback) {
