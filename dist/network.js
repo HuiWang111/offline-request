@@ -27,7 +27,9 @@ export class NetWork {
             interval
         };
         this.addEvents();
-        this.startPolling();
+        if (enabled) {
+            this.startPolling();
+        }
     }
     setOnline() {
         this._isOnline = true;
@@ -40,16 +42,11 @@ export class NetWork {
         window.addEventListener('offline', this.setOffline);
     }
     startPolling() {
-        const { enabled, url, timeout, interval } = this._pollingConfig;
-        if (!enabled) {
-            return;
-        }
+        const { interval } = this._pollingConfig;
+        this.stopPolling();
         this._pollingId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
             try {
-                if (this._pollingId) {
-                    this.stopPolling();
-                }
-                const isOnline = yield this.ping(url, timeout);
+                const isOnline = yield this.ping();
                 this._isOnline = isOnline;
             }
             catch (e) {
@@ -57,7 +54,8 @@ export class NetWork {
             }
         }), interval);
     }
-    ping(url, timeout) {
+    ping() {
+        const { url, timeout } = this._pollingConfig;
         return new Promise((resolve) => {
             const isOnline = () => resolve(true);
             const isOffline = () => resolve(false);

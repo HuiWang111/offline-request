@@ -33,7 +33,10 @@ export class NetWork {
         };
 
         this.addEvents();
-        this.startPolling();
+
+        if (enabled) {
+            this.startPolling();
+        }
     }
 
     private setOnline(): void {
@@ -44,25 +47,19 @@ export class NetWork {
         this._isOnline = false;
     }
 
-    private addEvents(): void {
+    public addEvents(): void {
         window.addEventListener('online', this.setOnline);
         window.addEventListener('offline', this.setOffline);
     }
 
-    private startPolling(): void {
-        const { enabled, url, timeout, interval } = this._pollingConfig;
+    public startPolling(): void {
+        const { interval } = this._pollingConfig;
 
-        if (!enabled) {
-            return;
-        }
+        this.stopPolling();
 
         this._pollingId = setInterval(async () => {
             try {
-                if (this._pollingId) {
-                    this.stopPolling();
-                }
-
-                const isOnline = await this.ping(url as string, timeout as number);
+                const isOnline = await this.ping();
                 this._isOnline = isOnline;
             } catch (e) {
                 console.error(e);
@@ -70,7 +67,9 @@ export class NetWork {
         }, interval);
     }
 
-    private ping(url: string, timeout: number): Promise<boolean> {
+    public ping(): Promise<boolean> {
+        const { url, timeout } = this._pollingConfig;
+
         return new Promise((resolve) => {
             const isOnline = () => resolve(true);
             const isOffline = () => resolve(false);
@@ -89,8 +88,8 @@ export class NetWork {
                 }
             };
 
-            xhr.open('GET', url);
-            xhr.timeout = timeout;
+            xhr.open('GET', url as string);
+            xhr.timeout = timeout as number;
             xhr.send();
         })
     }

@@ -10,34 +10,34 @@ export class OfflineRequest {
         this._options = {
             logRequestInfo
         };
-        this._isOnline = isOnline;
+        this.isOnline = isOnline;
     }
     get(url, config) {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.get(url, config);
         }
         return this._cacheClient.get(url, this._options, config);
     }
     delete(url, config) {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.delete(url, config);
         }
         return this._cacheClient.delete(url, this._options, config);
     }
     post(url, data, config) {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.post(url, data, config);
         }
         return this._cacheClient.post(url, this._options, data, config);
     }
     put(url, data, config) {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.put(url, data, config);
         }
         return this._cacheClient.put(url, this._options, data, config);
     }
     patch(url, data, config) {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.patch(url, data, config);
         }
         return this._cacheClient.patch(url, this._options, data, config);

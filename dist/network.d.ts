@@ -6,9 +6,9 @@ export declare class NetWork {
     constructor({ enabled, url, timeout, interval }?: PollingConfig);
     private setOnline;
     private setOffline;
-    private addEvents;
-    private startPolling;
-    private ping;
+    addEvents(): void;
+    startPolling(): void;
+    ping(): Promise<boolean>;
     stopPolling(): void;
     get isOnline(): boolean;
     removeEvents(): void;

@@ -5,7 +5,7 @@ export declare class OfflineRequest {
     private _cacheClient;
     private _server;
     private _options;
-    private _isOnline;
+    isOnline: () => boolean;
     constructor(httpClient: AxiosInstance, isOnline: () => boolean, { logRequestInfo }?: OfflineRequestOptions);
     get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;
     delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined>;

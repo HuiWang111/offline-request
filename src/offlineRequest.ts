@@ -8,7 +8,8 @@ export class OfflineRequest {
     private _cacheClient: OfflineRequestClient;
     private _server: Router;
     private _options: OfflineRequestOptions;
-    private _isOnline: () => boolean;
+
+    public isOnline: () => boolean;
 
     constructor(
         httpClient: AxiosInstance,
@@ -25,39 +26,39 @@ export class OfflineRequest {
         this._options = {
             logRequestInfo
         }
-        this._isOnline = isOnline;
+        this.isOnline = isOnline;
     }
 
     public get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.get(url, config);
         }
         return this._cacheClient.get(url, this._options, config);
     }
 
     public delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.delete(url, config);
         }
         return this._cacheClient.delete(url, this._options, config);
     }
 
     public post(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.post(url, data, config);
         }
         return this._cacheClient.post(url, this._options, data, config);
     }
 
     public put(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.put(url, data, config);
         }
         return this._cacheClient.put(url, this._options, data, config);
     }
 
     public patch(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-        if (this._isOnline()) {
+        if (this.isOnline()) {
             return this._httpClient.patch(url, data, config);
         }
         return this._cacheClient.patch(url, this._options, data, config);
