@@ -25,7 +25,10 @@ class QueryString {
         }
         const res = /(.*)\?(.*)/.exec(url);
         if (!res) {
-            return {};
+            return {
+                pathname: url,
+                qs: ''
+            };
         }
         return {
             pathname: res[1],

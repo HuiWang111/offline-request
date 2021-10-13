@@ -38,7 +38,10 @@ class QueryString {
         const res: RegExpExecArray | null = /(.*)\?(.*)/.exec(url);
         
         if (!res) {
-            return {};
+            return {
+                pathname: url,
+                qs: ''
+            };
         }
 
         return {
