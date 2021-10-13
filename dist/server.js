@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { RequestMethod } from './interface';
+import { qs } from './utils';
 export class Router {
     constructor() {
         this._events = new Map();
@@ -55,10 +56,11 @@ export class Router {
                     }, null, 4));
                 }
             }
-            const eventType = `${RequestMethod[method]}:${url}`;
+            const { pathname, qs: queryString } = qs.split(url);
+            const eventType = `${RequestMethod[method]}:${pathname}`;
             const callback = this._events.get(eventType);
             if (callback) {
-                const response = yield callback(data, config);
+                const response = yield callback(data, config, qs.parse(queryString || ''));
                 return Object.assign(Object.assign({}, response), { headers: {}, config: {}, request: {} });
             }
             console.warn(`${eventType} has no callback`);

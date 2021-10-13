@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { RequestMethod, RequestMethodType, RouterCallbackResponse, OfflineRequestOptions } from './interface';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { qs } from './utils';
 
 export class Router {
     private _events: Map<string, (...args: any[]) => Promise<RouterCallbackResponse>>;
@@ -57,11 +58,12 @@ export class Router {
             }
         }
 
-        const eventType = `${RequestMethod[method]}:${url}`;
+        const { pathname, qs: queryString } = qs.split(url);
+        const eventType = `${RequestMethod[method]}:${pathname}`;
         const callback = this._events.get(eventType);
 
         if (callback) {
-            const response: RouterCallbackResponse = await callback(data, config);
+            const response: RouterCallbackResponse = await callback(data, config, qs.parse(queryString || ''));
             
             return {
                 ...response,
