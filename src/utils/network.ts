@@ -1,7 +1,7 @@
 /**
  * @reference https://github.com/cwise89/react-detect-offline/blob/master/src/index.js
  */
-import { PollingConfig } from './interface';
+import { PollingConfig } from '../interface';
 
 const isBrowser = typeof navigator !== 'undefined';
 const defaultPollingConfig: PollingConfig = {

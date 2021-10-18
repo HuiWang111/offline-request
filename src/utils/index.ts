@@ -1,3 +1,3 @@
-export {
-    qs
-} from './qs';
+export { qs } from './qs';
+
+export { Logger } from './logger';

@@ -1,4 +1,5 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { Context } from './context';
 
 export interface PollingConfig {
     enabled?: boolean;
@@ -47,3 +48,5 @@ export interface OfflineRequestServer {
 export interface OfflineRequestOptions {
     logRequestInfo?: boolean;
 }
+
+export type RouterCallback = (ctx: Context) => Promise<RouterCallbackResponse>;
