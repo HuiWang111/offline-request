@@ -13,7 +13,7 @@ yarn add offline-request
 - 创建一个 `OfflineRequest` 实例
 ```ts
 // utils
-import OfflineRequest, { NetWork } from '../../../../src'
+import OfflineRequest, { NetWork } from 'offline-request'
 import Axios from 'axios'
 
 const network = new NetWork()
@@ -52,7 +52,7 @@ export const Dashboard: FC = observer(() => {
 
     useEffect(() => {
         const fetchTodos = async () => {
-            const res = await offlineRequest.get('/todos/query'); // 从indexdb中获取数据
+            const res = await offlineRequest.get('/todos/query?a=1&b=2'); // 从indexdb中获取数据
             setList(res!.data.map((item: { text: string }) => item.text));
         }
 
@@ -106,27 +106,30 @@ export const runServer = () => {
 ```ts
 // server/todos.ts
 import Dexie from 'dexie';
-import { OfflineRequestServer } from '../../../../src';
+import { OfflineRequestServer } from 'offline-request';
 
 export const todoController = (db: Dexie, router: OfflineRequestServer) => {
     db.version(1).stores({
         todos: 'text'
     });
     
-    router.get('/todos/query', async () => {
+    router.get('/todos/query', async (ctx) => {
+        const { query } = ctx;
+        console.log(query, 'query'); // {a: '1', b: '2'}
+
         const todos = await db.table('todos').toArray();
-        console.log(todos);
-        return {
+        
+        ctx.body = {
             data: todos,
             status: 200,
             statusText: 'ok'
         };
     });
 
-    router.put('/todos', async (todo: { text: string }) => {
-        await db.table('todos').add(todo);
+    router.put('/todos', async (ctx) => {
+        await db.table('todos').add(ctx.data);
 
-        return {
+        ctx.body = {
             data: 'ok',
             status: 200,
             statusText: 'ok'

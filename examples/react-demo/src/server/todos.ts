@@ -6,21 +6,23 @@ export const todoController = (db: Dexie, router: OfflineRequestServer) => {
         todos: 'text'
     });
     
-    router.get('/todos/query', async (_, __, query) => {
+    router.get('/todos/query', async (ctx) => {
+        const { query } = ctx;
         console.log(query, 'query');
+
         const todos = await db.table('todos').toArray();
-        console.log(todos);
-        return {
+        
+        ctx.body = {
             data: todos,
             status: 200,
             statusText: 'ok'
         };
     });
 
-    router.put('/todos', async (todo: { text: string }) => {
-        await db.table('todos').add(todo);
+    router.put('/todos', async (ctx) => {
+        await db.table('todos').add(ctx.data);
 
-        return {
+        ctx.body = {
             data: 'ok',
             status: 200,
             statusText: 'ok'

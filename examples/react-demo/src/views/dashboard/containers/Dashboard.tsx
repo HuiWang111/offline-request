@@ -26,6 +26,7 @@ export const Dashboard: FC = observer(() => {
     useEffect(() => {
         const fetchTodos = async () => {
             const res = await offlineRequest.get('/todos/query?a=1&b=2');
+            console.log(res)
             setList(res!.data.map((item: { text: string }) => item.text));
         }
 

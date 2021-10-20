@@ -1,4 +1,4 @@
-import { RequestMethod, RequestMethodType, OfflineRequestOptions, RouterCallback } from './interface';
+import { RequestMethod, RequestMethodType, OfflineRequestOptions, RouterCallback, RouterCallbackResponse } from './interface';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { qs, Logger } from './utils';
 import { Context } from './context';
@@ -14,6 +14,30 @@ export class Router {
         this.post = this.post.bind(this);
         this.put = this.put.bind(this);
         this.patch = this.patch.bind(this);
+    }
+
+    /**
+     * 为了实现通过 ctx.body = {} 的形式将值返回给client端
+     * 这里在回调外面包一层，将resolve的权限递交给Context
+     */
+    private _callbackWrapper(
+        callback: RouterCallback,
+        query: Record<string, unknown>,
+        qs: string,
+        data?: unknown,
+        config?: AxiosRequestConfig
+    ): Promise<RouterCallbackResponse> {
+        return new Promise((resolve) => {
+            const ctx = new Context(
+                resolve,
+                query,
+                qs,
+                data,
+                config
+            );
+
+            callback(ctx);
+        });
     }
 
     public get(url: string, callback: RouterCallback): void {
@@ -43,24 +67,28 @@ export class Router {
         data?: unknown,
         config?: AxiosRequestConfig
     ): Promise<AxiosResponse | undefined> {
+        const { pathname, qs: queryString } = qs.split(url);
+        const query = qs.parse(queryString || '');
+
         Logger.json(
-            { method, url, data, config },
+            { method, url, data, config, query },
             'offline request information',
             options.logRequestInfo
         );
 
-        const { pathname, qs: queryString } = qs.split(url);
+        
         const eventType = `${RequestMethod[method]}:${pathname}`;
         const callback = this._events.get(eventType);
-        const ctx = new Context(
-            qs.parse(queryString || ''),
-            queryString || '',
-            data,
-            config
-        );
+        
 
         if (callback) {
-            const response = await callback(ctx);
+            const response = await this._callbackWrapper(
+                callback,
+                query,
+                queryString || '',
+                data,
+                config
+            );
             
             return {
                 ...response,

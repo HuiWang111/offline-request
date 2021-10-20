@@ -38,15 +38,15 @@ export interface RouterCallbackResponse {
 }
 
 export interface OfflineRequestServer {
-    get: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    delete: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    post: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    put: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    patch: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
+    get: (url: string, callback: RouterCallback) => void;
+    delete: (url: string, callback: RouterCallback) => void;
+    post: (url: string, callback: RouterCallback) => void;
+    put: (url: string, callback: RouterCallback) => void;
+    patch: (url: string, callback: RouterCallback) => void;
 }
 
 export interface OfflineRequestOptions {
     logRequestInfo?: boolean;
 }
 
-export type RouterCallback = (ctx: Context) => Promise<RouterCallbackResponse>;
+export type RouterCallback = (ctx: Context) => Promise<void>;
