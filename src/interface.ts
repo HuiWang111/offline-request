@@ -50,3 +50,12 @@ export interface OfflineRequestOptions {
 }
 
 export type RouterCallback = (ctx: Context) => Promise<void>;
+
+export interface ContextRequest {
+    query: Record<string, unknown>;
+    qs: string;
+    data?: unknown;
+    pathname: string;
+    config?: AxiosRequestConfig;
+    method: string;
+}

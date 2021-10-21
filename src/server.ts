@@ -22,6 +22,8 @@ export class Router {
      */
     private _callbackWrapper(
         callback: RouterCallback,
+        pathname: string,
+        method: string,
         query: Record<string, unknown>,
         qs: string,
         data?: unknown,
@@ -30,6 +32,8 @@ export class Router {
         return new Promise((resolve) => {
             const ctx = new Context(
                 resolve,
+                pathname,
+                method,
                 query,
                 qs,
                 data,
@@ -71,7 +75,7 @@ export class Router {
         const query = qs.parse(queryString || '');
 
         Logger.json(
-            { method, url, data, config, query },
+            { method, pathname, data, config, query },
             'offline request information',
             options.logRequestInfo
         );
@@ -84,6 +88,8 @@ export class Router {
         if (callback) {
             const response = await this._callbackWrapper(
                 callback,
+                pathname as string,
+                method,
                 query,
                 queryString || '',
                 data,

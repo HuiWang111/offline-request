@@ -1,26 +1,30 @@
 import { AxiosRequestConfig } from 'axios';
 import { RouterCallbackResponse } from './interface';
+import { Request } from './request';
 
 export class Context {
-    public query: Record<string, unknown>;
-    public qs: string;
-    public data?: unknown;
-    public config?: AxiosRequestConfig;
-
+    public request: Request;
+    
     private _resolve: (data: any) => void;
 
     constructor(
         resolve: (data: any) => void,
+        pathname: string,
+        method: string,
         query: Record<string, unknown>,
         qs: string,
         data?: unknown,
         config?: AxiosRequestConfig
     ) {
         this._resolve = resolve;
-        this.query = query;
-        this.qs = qs;
-        this.data = data;
-        this.config = config;
+        this.request = new Request(
+            pathname,
+            method,
+            query,
+            qs,
+            data,
+            config
+        );
     }
 
     set body(res: RouterCallbackResponse) {

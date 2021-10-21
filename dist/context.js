@@ -1,10 +1,8 @@
+import { Request } from './request';
 export class Context {
-    constructor(resolve, query, qs, data, config) {
+    constructor(resolve, pathname, method, query, qs, data, config) {
         this._resolve = resolve;
-        this.query = query;
-        this.qs = qs;
-        this.data = data;
-        this.config = config;
+        this.request = new Request(pathname, method, query, qs, data, config);
     }
     set body(res) {
         this._resolve(res);
