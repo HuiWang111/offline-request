@@ -18,7 +18,9 @@
         "jsx": "react",
         "downlevelIteration": true,
         "removeComments": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "types": ["reflect-metadata", "jest", "node"],
+        "typeRoots": ["./types", "./node_modules/@types"]
     },
     "include": [
         "src/**/*.ts",
