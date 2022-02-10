@@ -6,6 +6,15 @@
     "module": "dist/index.js",
     "types": "dist/index.d.ts",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:HuiWang111/offline-request.git"
+    },
+    "homepage": "https://github.com/HuiWang111/offline-request",
+    "keywords": [
+        "request",
+        "offline"
+    ],
     "devDependencies": {
         "@types/jest": "^27.0.2",
         "@types/node": "^16.9.1",

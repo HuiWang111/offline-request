@@ -1,3 +1,10 @@
+/*
+ * @Autor: hui.wang
+ * @Date: 2021-09-10 15:59:12
+ * @LastEditors: hui.wang
+ * @LastEditTime: 2022-02-10 15:00:38
+ * @emial: hui.wang@bizfocus.cn
+ */
 import { FC, useState, ChangeEvent, useRef, useEffect } from 'react'
 import { Button, Row, Col, Input } from 'antd'
 import { useAppContext } from 'hooks'
@@ -26,7 +33,7 @@ export const Dashboard: FC = observer(() => {
     useEffect(() => {
         const fetchTodos = async () => {
             const res = await offlineRequest.get('/todos/query?a=1&b=2');
-            console.log(res)
+            console.log(res, '前端接受到数据')
             setList(res!.data.map((item: { text: string }) => item.text));
         }
 
