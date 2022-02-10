@@ -19,7 +19,7 @@
         "downlevelIteration": true,
         "removeComments": true,
         "esModuleInterop": true,
-        "types": ["reflect-metadata", "jest", "node"],
+        "types": ["node", "jest"],
         "typeRoots": ["./types", "./node_modules/@types"]
     },
     "include": [
