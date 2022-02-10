@@ -1,11 +1,20 @@
 {
     "name": "offline-request",
-    "version": "1.6.0",
+    "version": "2.0.0",
     "description": "compatibility offline and online request tools",
     "main": "dist/index.js",
     "module": "dist/index.js",
     "types": "dist/index.d.ts",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:HuiWang111/offline-request.git"
+    },
+    "homepage": "https://github.com/HuiWang111/offline-request",
+    "keywords": [
+        "request",
+        "offline"
+    ],
     "devDependencies": {
         "@types/jest": "^27.0.2",
         "@types/node": "^16.9.1",

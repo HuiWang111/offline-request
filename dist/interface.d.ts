@@ -1,4 +1,5 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { Context } from './context';
 export interface PollingConfig {
     enabled?: boolean;
     url?: string;
@@ -26,12 +27,21 @@ export interface RouterCallbackResponse {
     statusText: string;
 }
 export interface OfflineRequestServer {
-    get: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    delete: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    post: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    put: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
-    patch: (url: string, callback: (...args: any[]) => Promise<RouterCallbackResponse>) => void;
+    get: (url: string, callback: RouterCallback) => void;
+    delete: (url: string, callback: RouterCallback) => void;
+    post: (url: string, callback: RouterCallback) => void;
+    put: (url: string, callback: RouterCallback) => void;
+    patch: (url: string, callback: RouterCallback) => void;
 }
 export interface OfflineRequestOptions {
     logRequestInfo?: boolean;
+}
+export declare type RouterCallback = (ctx: Context) => Promise<void>;
+export interface ContextRequest {
+    query: Record<string, unknown>;
+    qs: string;
+    data?: unknown;
+    pathname: string;
+    config?: AxiosRequestConfig;
+    method: string;
 }

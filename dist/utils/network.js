@@ -1,27 +1,22 @@
-/**
- * @reference https://github.com/cwise89/react-detect-offline/blob/master/src/index.js
- */
-import { PollingConfig } from './interface';
-
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 const isBrowser = typeof navigator !== 'undefined';
-const defaultPollingConfig: PollingConfig = {
+const defaultPollingConfig = {
     enabled: true,
     url: 'https://httpbin.org/get',
     timeout: 5000,
     interval: 5000
 };
-
 export class NetWork {
-    private _isOnline: boolean;
-    private _pollingConfig: PollingConfig;
-    private _pollingId: NodeJS.Timer | null = null;
-
-    constructor({
-        enabled = defaultPollingConfig.enabled,
-        url = defaultPollingConfig.url,
-        timeout = defaultPollingConfig.timeout,
-        interval = defaultPollingConfig.interval
-    }: PollingConfig = defaultPollingConfig) {
+    constructor({ enabled = defaultPollingConfig.enabled, url = defaultPollingConfig.url, timeout = defaultPollingConfig.timeout, interval = defaultPollingConfig.interval } = defaultPollingConfig) {
+        this._pollingId = null;
         this._isOnline = isBrowser && typeof navigator.onLine === 'boolean'
             ? navigator.onLine
             : true;
@@ -31,81 +26,67 @@ export class NetWork {
             timeout,
             interval
         };
-
         this.addEvents();
-
         if (enabled) {
             this.startPolling();
         }
     }
-
-    private setOnline(): void {
+    setOnline() {
         this._isOnline = true;
     }
-
-    private setOffline(): void {
+    setOffline() {
         this._isOnline = false;
     }
-
-    public addEvents(): void {
+    addEvents() {
         window.addEventListener('online', this.setOnline);
         window.addEventListener('offline', this.setOffline);
     }
-
-    public startPolling(): void {
+    startPolling() {
         const { interval } = this._pollingConfig;
-
         this.stopPolling();
-
-        this._pollingId = setInterval(async () => {
+        this._pollingId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
             try {
-                const isOnline = await this.ping();
+                const isOnline = yield this.ping();
                 this._isOnline = isOnline;
-            } catch (e) {
+            }
+            catch (e) {
                 console.error(e);
             }
-        }, interval);
+        }), interval);
     }
-
-    public ping(): Promise<boolean> {
+    ping() {
         const { url, timeout } = this._pollingConfig;
-
         return new Promise((resolve) => {
             const isOnline = () => resolve(true);
             const isOffline = () => resolve(false);
-
             const xhr = new XMLHttpRequest();
-
             xhr.onerror = isOffline;
             xhr.ontimeout = isOffline;
-            xhr.onreadystatechange = function() {
+            xhr.onreadystatechange = function () {
                 if (xhr.readyState === xhr.HEADERS_RECEIVED) {
                     if (xhr.status) {
                         isOnline();
-                    } else {
+                    }
+                    else {
                         isOffline();
                     }
                 }
             };
-
-            xhr.open('GET', url as string);
-            xhr.timeout = timeout as number;
+            xhr.open('GET', url);
+            xhr.timeout = timeout;
             xhr.send();
-        })
+        });
     }
-
-    public stopPolling(): void {
+    stopPolling() {
         if (this._pollingId) {
             clearInterval(this._pollingId);
             this._pollingId = null;
         }
     }
-
-    public get isOnline(): boolean {
+    get isOnline() {
         return this._isOnline;
     }
-
-    public removeEvents(): void {
+    removeEvents() {
         window.removeEventListener('online', this.setOnline);
         window.removeEventListener('offline', this.setOffline);
     }

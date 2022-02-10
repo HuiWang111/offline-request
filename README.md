@@ -13,7 +13,7 @@ yarn add offline-request
 - 创建一个 `OfflineRequest` 实例
 ```ts
 // utils
-import OfflineRequest, { NetWork } from '../../../../src'
+import OfflineRequest, { NetWork } from 'offline-request'
 import Axios from 'axios'
 
 const network = new NetWork()
@@ -52,7 +52,7 @@ export const Dashboard: FC = observer(() => {
 
     useEffect(() => {
         const fetchTodos = async () => {
-            const res = await offlineRequest.get('/todos/query'); // 从indexdb中获取数据
+            const res = await offlineRequest.get('/todos/query?a=1&b=2'); // 从indexdb中获取数据
             setList(res!.data.map((item: { text: string }) => item.text));
         }
 
@@ -106,27 +106,32 @@ export const runServer = () => {
 ```ts
 // server/todos.ts
 import Dexie from 'dexie';
-import { OfflineRequestServer } from '../../../../src';
+import { OfflineRequestServer } from 'offline-request';
 
 export const todoController = (db: Dexie, router: OfflineRequestServer) => {
     db.version(1).stores({
         todos: 'text'
     });
     
-    router.get('/todos/query', async () => {
+    router.get('/todos/query', async (ctx) => {
+        const { query } = ctx.request;
+        console.log(query, 'query'); // {a: '1', b: '2'}
+
         const todos = await db.table('todos').toArray();
-        console.log(todos);
-        return {
+        
+        ctx.body = {
             data: todos,
             status: 200,
             statusText: 'ok'
         };
     });
 
-    router.put('/todos', async (todo: { text: string }) => {
-        await db.table('todos').add(todo);
+    router.put('/todos', async (ctx) => {
+        const { data } = ctx.request;
 
-        return {
+        await db.table('todos').add(data);
+
+        ctx.body = {
             data: 'ok',
             status: 200,
             statusText: 'ok'
@@ -226,3 +231,70 @@ export interface PollingConfig {
 ```js
 const isOnline = await network.ping();
 ```
+
+## Context实例
+离线服务路由回调函数拿到的对象。
+```ts
+router.get('/todos/query', async (ctx) => {
+    const { query } = ctx.request;
+    console.log(query, 'query');
+
+    const todos = await db.table('todos').toArray();
+    
+    ctx.body = {
+        data: todos,
+        status: 200,
+        statusText: 'ok'
+    };
+});
+```
+
+- **ctx.body**
+set属性。当执行 `ctx.body = ...` 时，就会将等号后面的数据直接返回给前端。（仿照的Koa）
+
+
+- **ctx.request**
+前端传递过来的一些参数。
+
+    1. ctx.request.pathname
+    请求的路由，如：`/todos/query`
+
+    2. ctx.request.method
+    请求方法。
+
+    3. ctx.request.query
+    请求url附带的查询参数（已转化为对象）。
+    ```ts
+    offlineRequest.get('/todos/query?a=1&b=2');
+
+    router.get('/todos/query', async (ctx) => {
+        const { query } = ctx.request;
+        // 此时query就是 {a: "1", b: "2"}
+    });
+    ```
+
+    4. ctx.request.qs
+    请求url附带的查询参数（字符串）。
+    ```ts
+    offlineRequest.get('/todos/query?a=1&b=2');
+
+    router.get('/todos/query', async (ctx) => {
+        const { qs } = ctx.request;
+        // 此时qs就是 "a=1&b=2"
+    });
+    ```
+
+    5. ctx.request.data
+    请求传递的数据。
+    ```ts
+    const text = '123'
+    offlineRequest.put('/todos', { text });
+
+    router.put('/todos', async (ctx) => {
+        const { data } = ctx.request;
+        // 此时data就是 { text: '123' }
+    });
+    ```
+
+    6. ctx.request.config
+    请求相关的配置。参考类型[AxiosRequestConfig](https://github.com/axios/axios/blob/master/index.d.ts#L76)
